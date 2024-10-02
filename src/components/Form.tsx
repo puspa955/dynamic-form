@@ -26,27 +26,16 @@ type FormProps = {
 const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, type, value } = e.target;
-
-    // Handle checkbox input
-    if (type === 'checkbox') {
-      const checked = (e.target as HTMLInputElement).checked; 
-      setFormData({
-        ...formData,
-        [name]: checked,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
+  const handleFieldChange = (name: string, value: any) => {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit(formData); 
   };
 
   return (
@@ -65,7 +54,7 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
                 type={field.type}
                 placeholder={field.placeholder}
                 value={formData[field.name] || ''}
-                onChange={handleChange}
+                onChange={(value) => handleFieldChange(field.name, value)}
                 required={field.required}
                 minLength={field.minLength}
                 maxLength={field.maxLength}
@@ -79,7 +68,7 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
                 label={field.label}
                 placeholder={field.placeholder}
                 value={formData[field.name] || ''}
-                onChange={handleChange}
+                onChange={(value) => handleFieldChange(field.name, value)}
                 required={field.required}
                 maxLength={field.maxLength}
               />
@@ -92,7 +81,7 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
                 label={field.label}
                 options={field.options || []}
                 value={formData[field.name] || ''}
-                onChange={handleChange}
+                onChange={(value) => handleFieldChange(field.name, value)}
                 required={field.required}
               />
             );
@@ -103,7 +92,7 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
                 name={field.name}
                 label={field.label}
                 checked={formData[field.name] || false}
-                onChange={handleChange}
+                onChange={(checked) => handleFieldChange(field.name, checked)}
                 required={field.required}
               />
             );
@@ -113,7 +102,7 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
                 key={index}
                 name={field.name}
                 label={field.label}
-                onChange={handleChange}
+                onChange={(file) => handleFieldChange(field.name, file)}
                 required={field.required}
               />
             );
