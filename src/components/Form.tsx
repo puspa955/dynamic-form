@@ -20,7 +20,7 @@ type Field = {
 
 type FormProps = {
   schema: Field[];
-  onSubmit: (data: any) => void; // Callback function to handle form submission
+  onSubmit: (data: any) => void; 
 };
 
 const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
@@ -31,7 +31,7 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
 
     // Handle checkbox input
     if (type === 'checkbox') {
-      const checked = (e.target as HTMLInputElement).checked; // Cast to HTMLInputElement
+      const checked = (e.target as HTMLInputElement).checked; 
       setFormData({
         ...formData,
         [name]: checked,
