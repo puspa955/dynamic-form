@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
+import FormField from './FormField';
 
 // Define the structure of the fields in the JSON schema, including validation rules
 type Field = {
@@ -9,8 +10,7 @@ type Field = {
   required?: boolean;
   minLength?: number;
   maxLength?: number;
-  options?: string[]; // For select elements
-  validationMessage?: string;
+  options?: string[];
 };
 
 // Define the props for the Form component
@@ -22,11 +22,11 @@ const Form: React.FC<FormProps> = ({ schema }) => {
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
 
-  // Handle input changes and updates form data
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  // Handle input changes and update form data
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value, type } = e.target;
-    
-    // Handle checkbox case specifically
     if (type === "checkbox") {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData({
@@ -41,7 +41,7 @@ const Form: React.FC<FormProps> = ({ schema }) => {
     }
   };
 
-  // Validate the fields based on schema
+  // Validate fields based on schema
   const validateField = (field: Field, value: string): string | null => {
     if (field.required && !value) {
       return `${field.label} is required`;
@@ -80,64 +80,13 @@ const Form: React.FC<FormProps> = ({ schema }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {schema.map((field, index) => (
-        <div key={index} className="flex flex-col space-y-2">
-          {field.type === "checkbox" ? (
-            // Align checkbox and label side by side
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                name={field.name}
-                id={field.name}
-                onChange={handleChange}
-                className="p-2 bg-gray-500 text-white rounded-md"
-              />
-              <label htmlFor={field.name} className="text-black">
-                {field.label}
-              </label>
-            </div>
-          ) : (
-            <>
-              <label htmlFor={field.name} className="text-black">
-                {field.label}
-              </label>
-              {field.type === "textarea" ? (
-                <textarea
-                  name={field.name}
-                  id={field.name}
-                  placeholder={field.placeholder}
-                  onChange={handleChange}
-                  className="p-2 bg-gray-400 text-white rounded-md"
-                />
-              ) : field.type === "select" ? (
-                <select
-                  name={field.name}
-                  id={field.name}
-                  onChange={handleChange}
-                  className="p-2 bg-gray-500 text-white rounded-md"
-                >
-                  {field.options?.map((option, idx) => (
-                    <option key={idx} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  type={field.type}
-                  name={field.name}
-                  id={field.name}
-                  placeholder={field.placeholder}
-                  onChange={handleChange}
-                  className="p-2 bg-gray-500 text-white rounded-md"
-                />
-              )}
-            </>
-          )}
-
-          {formErrors[field.name] && (
-            <span className="text-red-500">{formErrors[field.name]}</span>
-          )}
-        </div>
+        <FormField
+          key={index}
+          field={field}
+          value={formData[field.name] || ""}
+          error={formErrors[field.name]}
+          handleChange={handleChange}
+        />
       ))}
 
       <button
