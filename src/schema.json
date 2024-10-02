@@ -1,22 +1,136 @@
 {
-    "contactForm": [
-      { "name": "name", "label": "Name", "type": "text", "placeholder": "Enter your name" },
-      { "name": "email", "label": "Email", "type": "email", "placeholder": "Enter your email" },
-      { "name": "message", "label": "Message", "type": "textarea", "placeholder": "Enter your message" }
-    ],
-    "userProfileForm": [
-      { "name": "firstName", "label": "First Name", "type": "text", "placeholder": "Enter your first name" },
-      { "name": "lastName", "label": "Last Name", "type": "text", "placeholder": "Enter your last name" },
-      { "name": "email", "label": "Email", "type": "email", "placeholder": "Enter your email" },
-      { "name": "age", "label": "Age", "type": "number", "placeholder": "Enter your age" },
-      { "name": "bio", "label": "Bio", "type": "textarea", "placeholder": "Tell us about yourself" }
-    ],
-    "jobApplicationForm": [
-      { "name": "fullName", "label": "Full Name", "type": "text", "placeholder": "Enter your full name" },
-      { "name": "email", "label": "Email", "type": "email", "placeholder": "Enter your email" },
-      { "name": "phone", "label": "Phone Number", "type": "tel", "placeholder": "Enter your phone number" },
-      { "name": "position", "label": "Position", "type": "select", "options": ["Frontend Developer", "Backend Developer", "Full Stack Developer", "UI/UX Designer"] },
-      { "name": "resume", "label": "Upload Resume", "type": "file" }
-    ]
-  }
+  "contactForm": [
+    {
+      "name": "name",
+      "label": "Name",
+      "type": "text",
+      "placeholder": "Enter your name",
+      "required": true,
+      "minLength": 3,
+      "maxLength": 50
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "email",
+      "placeholder": "Enter your email",
+      "required": true
+    },
+    {
+      "name": "newsletter",
+      "label": "Subscribe to Newsletter",
+      "type": "checkbox",
+      "required": false
+    },
+    {
+      "name": "message",
+      "label": "Message",
+      "type": "textarea",
+      "placeholder": "Enter your message",
+      "maxLength": 500
+    },
+    {
+      "name": "agreeToTerms",
+      "label": "I agree to the terms and conditions",
+      "type": "checkbox",
+      "required": true
+    }
+  ],
   
+  "userProfileForm": [
+    {
+      "name": "firstName",
+      "label": "First Name",
+      "type": "text",
+      "placeholder": "Enter your first name",
+      "required": true,
+      "minLength": 2,
+      "maxLength": 30
+    },
+    {
+      "name": "lastName",
+      "label": "Last Name",
+      "type": "text",
+      "placeholder": "Enter your last name",
+      "required": true,
+      "minLength": 2,
+      "maxLength": 30
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "email",
+      "placeholder": "Enter your email",
+      "required": true
+    },
+    {
+      "name": "age",
+      "label": "Age",
+      "type": "number",
+      "placeholder": "Enter your age",
+      "required": true,
+      "min": 18,
+      "max": 100
+    },
+    {
+      "name": "bio",
+      "label": "Bio",
+      "type": "textarea",
+      "placeholder": "Tell us about yourself",
+      "maxLength": 200
+    },
+    {
+      "name": "receiveUpdates",
+      "label": "Receive updates about your profile",
+      "type": "checkbox",
+      "required": false
+    }
+  ],
+
+  "jobApplicationForm": [
+    {
+      "name": "fullName",
+      "label": "Full Name",
+      "type": "text",
+      "placeholder": "Enter your full name",
+      "required": true,
+      "minLength": 3,
+      "maxLength": 100
+    },
+    {
+      "name": "email",
+      "label": "Email",
+      "type": "email",
+      "placeholder": "Enter your email",
+      "required": true
+    },
+    {
+      "name": "phone",
+      "label": "Phone Number",
+      "type": "tel",
+      "placeholder": "Enter your phone number",
+      "required": true,
+      "minLength": 10,
+      "maxLength": 15
+    },
+    {
+      "name": "position",
+      "label": "Position",
+      "type": "select",
+      "options": ["Frontend Developer", "Backend Developer", "Full Stack Developer", "UI/UX Designer"],
+      "required": true
+    },
+    {
+      "name": "resume",
+      "label": "Upload Resume",
+      "type": "file",
+      "required": true
+    },
+    {
+      "name": "agreeToPrivacyPolicy",
+      "label": "I agree to the privacy policy",
+      "type": "checkbox",
+      "required": true
+    }
+  ]
+}
