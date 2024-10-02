@@ -1,35 +1,39 @@
-import React from "react";
-
-type Field = {
-  name: string;
-  label: string;
-  placeholder?: string;
-};
+import React from 'react';
 
 type TextAreaFieldProps = {
-  field: Field;
-  value: string;
-  error?: string;
-  handleChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    name: string;
+    label: string;
+    placeholder?: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    required?: boolean;
+    maxLength?: number;
 };
 
-const TextAreaField: React.FC<TextAreaFieldProps> = ({ field, value, error, handleChange }) => {
-  return (
-    <div className="flex flex-col space-y-2">
-      <label htmlFor={field.name} className="text-black">
-        {field.label}
-      </label>
-      <textarea
-        name={field.name}
-        id={field.name}
-        placeholder={field.placeholder}
-        value={value}
-        onChange={handleChange}
-        className="p-2 bg-gray-400 text-white rounded-md"
-      />
-      {error && <span className="text-red-500">{error}</span>}
-    </div>
-  );
+const TextAreaField: React.FC<TextAreaFieldProps> = ({
+    name,
+    label,
+    placeholder,
+    value,
+    onChange,
+    required,
+    maxLength,
+}) => {
+    return (
+        <div>
+            <label htmlFor={name} className="block mb-1">{label}</label>
+            <textarea
+                id={name}
+                name={name}
+                placeholder={placeholder}
+                value={value}
+                onChange={onChange}
+                required={required}
+                maxLength={maxLength} 
+                className="border p-2 rounded w-full"
+            />
+        </div>
+    );
 };
 
 export default TextAreaField;

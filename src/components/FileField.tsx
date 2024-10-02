@@ -1,33 +1,24 @@
-import React from "react";
-
-type Field = {
-  name: string;
-  label: string;
-};
+import React from 'react';
 
 type FileFieldProps = {
-  field: Field;
-  value: string;
-  error?: string;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  name: string;
+  label: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
 };
 
-const FileField: React.FC<FileFieldProps> = ({ field, value, handleChange, error }) => {
-  return (
-    <div className="flex flex-col space-y-2">
-      <label htmlFor={field.name} className="text-black">
-        {field.label}
-      </label>
-      <input
-        type="file"
-        name={field.name}
-        id={field.name}
-        onChange={handleChange}
-        className="p-2 bg-gray-500 text-white rounded-md"
-      />
-      {error && <span className="text-red-500">{error}</span>}
-    </div>
-  );
-};
+const FileField: React.FC<FileFieldProps> = ({ name, label, onChange, required }) => (
+  <div>
+    <label htmlFor={name}>{label}</label>
+    <input
+      type="file"
+      name={name}
+      id={name}
+      onChange={onChange}
+      required={required}
+      className="p-2 bg-gray-500 text-white rounded-md"
+    />
+  </div>
+);
 
 export default FileField;

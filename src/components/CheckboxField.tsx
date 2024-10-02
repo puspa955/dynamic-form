@@ -1,34 +1,26 @@
-import React from "react";
-
-type Field = {
-  name: string;
-  label: string;
-};
+import React from 'react';
 
 type CheckboxFieldProps = {
-  field: Field;
-  value: boolean;
-  error?: string;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  name: string;
+  label: string;
+  checked: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
 };
 
-const CheckboxField: React.FC<CheckboxFieldProps> = ({ field, value, handleChange, error }) => {
-  return (
-    <div className="flex items-center space-x-2">
+const CheckboxField: React.FC<CheckboxFieldProps> = ({ name, label, checked, onChange, required }) => (
+  <div>
+    <label>
       <input
         type="checkbox"
-        name={field.name}
-        id={field.name}
-        checked={value}
-        onChange={handleChange}
-        className="p-2 bg-gray-500 text-white rounded-md"
+        name={name}
+        checked={checked}
+        onChange={onChange}
+        required={required}
       />
-      <label htmlFor={field.name} className="text-black">
-        {field.label}
-      </label>
-      {error && <span className="text-red-500">{error}</span>}
-    </div>
-  );
-};
+      {label}
+    </label>
+  </div>
+);
 
 export default CheckboxField;

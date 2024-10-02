@@ -1,40 +1,32 @@
-import React from "react";
-
-type Field = {
-  name: string;
-  label: string;
-  options?: string[];
-};
+import React from 'react';
 
 type SelectFieldProps = {
-  field: Field;
+  name: string;
+  label: string;
+  options: string[];
   value: string;
-  error?: string;
-  handleChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  required?: boolean;
 };
 
-const SelectField: React.FC<SelectFieldProps> = ({ field, value, error, handleChange }) => {
-  return (
-    <div className="flex flex-col space-y-2">
-      <label htmlFor={field.name} className="text-black">
-        {field.label}
-      </label>
-      <select
-        name={field.name}
-        id={field.name}
-        value={value}
-        onChange={handleChange}
-        className="p-2 bg-gray-500 text-white rounded-md"
-      >
-        {field.options?.map((option, idx) => (
-          <option key={idx} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-      {error && <span className="text-red-500">{error}</span>}
-    </div>
-  );
-};
+const SelectField: React.FC<SelectFieldProps> = ({ name, label, options, value, onChange, required }) => (
+  <div>
+    <label htmlFor={name}>{label}</label>
+    <select
+      name={name}
+      id={name}
+      value={value}
+      onChange={onChange}
+      required={required}
+      className="p-2 bg-gray-500 text-white rounded-md"
+    >
+      {options.map((option, idx) => (
+        <option key={idx} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
+  </div>
+);
 
 export default SelectField;

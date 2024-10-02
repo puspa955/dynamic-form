@@ -1,34 +1,37 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
-import FormField from './FormField';
+import React, { useState, FormEvent } from 'react';
+import InputField from './InputField';
+import TextAreaField from './TextAreaField';
+import SelectField from './SelectField';
+import CheckboxField from './CheckboxField';
+import FileField from './FileField';
 
-// Define the structure of the fields in the JSON schema, including validation rules
 type Field = {
   name: string;
   label: string;
   type: string;
   placeholder?: string;
+  options?: string[];
   required?: boolean;
   minLength?: number;
   maxLength?: number;
-  options?: string[];
+  min?: number;
+  max?: number;
 };
 
-// Define the props for the Form component
 type FormProps = {
   schema: Field[];
+  onSubmit: (data: any) => void; // Callback function to handle form submission
 };
 
-const Form: React.FC<FormProps> = ({ schema }) => {
+const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
-  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
 
-  // Handle input changes and update form data
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value, type } = e.target;
-    if (type === "checkbox") {
-      const checked = (e.target as HTMLInputElement).checked;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, type, value } = e.target;
+
+    // Handle checkbox input
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked; // Cast to HTMLInputElement
       setFormData({
         ...formData,
         [name]: checked,
@@ -41,58 +44,84 @@ const Form: React.FC<FormProps> = ({ schema }) => {
     }
   };
 
-  // Validate fields based on schema
-  const validateField = (field: Field, value: string): string | null => {
-    if (field.required && !value) {
-      return `${field.label} is required`;
-    }
-    if (field.minLength && value.length < field.minLength) {
-      return `${field.label} must be at least ${field.minLength} characters`;
-    }
-    if (field.maxLength && value.length > field.maxLength) {
-      return `${field.label} must be at most ${field.maxLength} characters`;
-    }
-    return null;
-  };
-
-  // Handle form submission and validation
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newErrors: { [key: string]: string } = {};
-
-    // Validate all fields
-    schema.forEach((field) => {
-      const errorMessage = validateField(field, formData[field.name] || "");
-      if (errorMessage) {
-        newErrors[field.name] = errorMessage;
-      }
-    });
-
-    if (Object.keys(newErrors).length > 0) {
-      setFormErrors(newErrors);
-      return;
-    }
-
-    console.log("Form Submitted with data:", formData);
-    setFormErrors({});
+    onSubmit(formData);
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {schema.map((field, index) => (
-        <FormField
-          key={index}
-          field={field}
-          value={formData[field.name] || ""}
-          error={formErrors[field.name]}
-          handleChange={handleChange}
-        />
-      ))}
-
-      <button
-        className="bg-green-700 p-2 rounded-md hover:bg-green-600 text-white"
-        type="submit"
-      >
+      {schema.map((field, index) => {
+        switch (field.type) {
+          case 'text':
+          case 'email':
+          case 'number':
+          case 'tel':
+            return (
+              <InputField
+                key={index}
+                name={field.name}
+                label={field.label}
+                type={field.type}
+                placeholder={field.placeholder}
+                value={formData[field.name] || ''}
+                onChange={handleChange}
+                required={field.required}
+                minLength={field.minLength}
+                maxLength={field.maxLength}
+              />
+            );
+          case 'textarea':
+            return (
+              <TextAreaField
+                key={index}
+                name={field.name}
+                label={field.label}
+                placeholder={field.placeholder}
+                value={formData[field.name] || ''}
+                onChange={handleChange}
+                required={field.required}
+                maxLength={field.maxLength}
+              />
+            );
+          case 'select':
+            return (
+              <SelectField
+                key={index}
+                name={field.name}
+                label={field.label}
+                options={field.options || []}
+                value={formData[field.name] || ''}
+                onChange={handleChange}
+                required={field.required}
+              />
+            );
+          case 'checkbox':
+            return (
+              <CheckboxField
+                key={index}
+                name={field.name}
+                label={field.label}
+                checked={formData[field.name] || false}
+                onChange={handleChange}
+                required={field.required}
+              />
+            );
+          case 'file':
+            return (
+              <FileField
+                key={index}
+                name={field.name}
+                label={field.label}
+                onChange={handleChange}
+                required={field.required}
+              />
+            );
+          default:
+            return null;
+        }
+      })}
+      <button type="submit" className="bg-green-700 p-2 rounded-md hover:bg-green-600 text-white">
         Submit
       </button>
     </form>
