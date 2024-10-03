@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 type CheckboxFieldProps = {
   name: string;
   label: string;
   checked: boolean;
-  onChange: (checked: boolean) => void; 
+  onChange: (checked: boolean) => void;
   required?: boolean;
 };
 
@@ -15,10 +15,6 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
   onChange,
   required,
 }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.checked); 
-  };
-
   return (
     <div>
       <label>
@@ -26,7 +22,7 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
           type="checkbox"
           name={name}
           checked={checked}
-          onChange={handleChange}
+          onChange={(e) => onChange(e.target.checked)}
           required={required}
         />
         {label}

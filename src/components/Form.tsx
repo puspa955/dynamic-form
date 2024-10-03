@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState } from 'react';
 import InputField from './InputField';
 import TextAreaField from './TextAreaField';
 import SelectField from './SelectField';
@@ -20,22 +20,62 @@ type Field = {
 
 type FormProps = {
   schema: Field[];
-  onSubmit: (data: any) => void; 
+  onSubmit: (data: any) => void;
 };
 
 const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
+  const [isValid, setIsValid] = useState(true);
 
   const handleFieldChange = (name: string, value: any) => {
     setFormData({
       ...formData,
       [name]: value,
     });
+
+    // Validate the field after change
+    const field = schema.find(f => f.name === name);
+    if (field) {
+      const error = validateField(field, value);
+      setIsValid(!error);
+    }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const validateField = (field: Field, value: any) => {
+    if (field.required && (value === undefined || value === null || value === '')) {
+      return `${field.label} is required.`;
+    }
+    
+    if (typeof value === 'string') { // Check if value is a string before checking length
+      if (field.minLength && value.length < field.minLength) {
+        return `${field.label} must be at least ${field.minLength} characters long.`;
+      }
+      if (field.maxLength && value.length > field.maxLength) {
+        return `${field.label} must be at most ${field.maxLength} characters long.`;
+      }
+    }
+    
+    if (field.min !== undefined && value < field.min) {
+      return `${field.label} must be at least ${field.min}.`;
+    }
+    
+    if (field.max !== undefined && value > field.max) {
+      return `${field.label} must be at most ${field.max}.`;
+    }
+    
+    return ''; // No error
+  };
+  
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmit(formData); 
+    // Check all fields for validation
+    const errors = schema.map(field => validateField(field, formData[field.name]));
+    setIsValid(!errors.some(error => error));
+
+    if (isValid) {
+      onSubmit(formData);
+    }
   };
 
   return (
@@ -45,7 +85,6 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
           case 'text':
           case 'email':
           case 'number':
-          case 'tel':
             return (
               <InputField
                 key={index}
@@ -110,7 +149,11 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
             return null;
         }
       })}
-      <button type="submit" className="bg-green-700 p-2 rounded-md hover:bg-green-600 text-white">
+      <button
+        type="submit"
+        disabled={!isValid}
+        className={`bg-blue-500 text-white py-2 px-4 rounded ${!isValid ? 'opacity-50 cursor-not-allowed' : ''}`}
+      >
         Submit
       </button>
     </form>
