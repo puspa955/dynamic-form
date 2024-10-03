@@ -29,7 +29,7 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.checked;
     onChange(newValue);
-    validate(newValue); // Validate on change
+    // validate(newValue); // Validate on change
   };
 
   const validate = (value: boolean) => {

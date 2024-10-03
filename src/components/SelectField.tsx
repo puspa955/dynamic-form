@@ -30,7 +30,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value;
     onChange(newValue); // Sends the value to the form
-    validate(newValue); // Validates the value inside the field
+    // validate(newValue); // Validates the value inside the field
   };
 
   const validate = (value: string) => {
