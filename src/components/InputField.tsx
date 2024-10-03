@@ -3,13 +3,12 @@ import React, { useState } from 'react';
 type InputFieldProps = {
   name: string;
   label: string;
-  type: string;
+  type: string; 
   placeholder?: string;
-  value: any;
-  onChange: (value: string) => void;
   required?: boolean;
   minLength?: number;
   maxLength?: number;
+  onValueChange: (name: string, value: string) => void; 
 };
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -17,24 +16,42 @@ const InputField: React.FC<InputFieldProps> = ({
   label,
   type,
   placeholder,
-  value,
-  onChange,
   required,
   minLength,
   maxLength,
+  onValueChange,
 }) => {
+  const [value, setValue] = useState('');
   const [error, setError] = useState('');
 
-  const handleBlur = () => {
-    if (required && !value) {
-      setError(`${label} is required.`);
-    } else if (minLength && value.length < minLength) {
-      setError(`${label} must be at least ${minLength} characters long.`);
-    } else if (maxLength && value.length > maxLength) {
-      setError(`${label} must be at most ${maxLength} characters long.`);
-    } else {
-      setError('');
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+    onValueChange(name, newValue);
+    validate(newValue);
+  };
+
+  const validate = (newValue: string) => {
+    let errorMsg = '';
+    
+    // Check for required field
+    if (required && !newValue) {
+      errorMsg = `${label} is required.`;
+    } 
+    // Validate email format
+    else if (type === 'email' && newValue && !/\S+@\S+\.\S+/.test(newValue)) {
+      errorMsg = 'Please enter a valid email address.';
     }
+    // Check for minimum length
+    else if (minLength && newValue.length < minLength) {
+      errorMsg = `${label} must be at least ${minLength} characters long.`;
+    } 
+    // Check for maximum length
+    else if (maxLength && newValue.length > maxLength) {
+      errorMsg = `${label} must be at most ${maxLength} characters long.`;
+    }
+
+    setError(errorMsg);
   };
 
   return (
@@ -45,11 +62,8 @@ const InputField: React.FC<InputFieldProps> = ({
         name={name}
         placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onBlur={handleBlur}
-        required={required}
-        minLength={minLength}
-        maxLength={maxLength}
+        onChange={handleChange}
+        onBlur={() => validate(value)} 
         className={`border p-2 rounded w-full ${error ? 'border-red-500' : ''}`}
       />
       {error && <p className="text-red-500 text-sm">{error}</p>}

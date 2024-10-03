@@ -3,30 +3,44 @@ import React, { useState } from 'react';
 type CheckboxFieldProps = {
   name: string;
   label: string;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
   required?: boolean;
+  onValueChange: (name: string, value: boolean) => void; 
 };
 
 const CheckboxField: React.FC<CheckboxFieldProps> = ({
   name,
   label,
-  checked,
-  onChange,
   required,
+  onValueChange,
 }) => {
+  const [checked, setChecked] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newChecked = e.target.checked;
+    setChecked(newChecked);
+    onValueChange(name, newChecked);
+    validate(newChecked);
+  };
+
+  const validate = (newChecked: boolean) => {
+    const errorMsg = required && !newChecked ? `${label} is required.` : '';
+    setError(errorMsg);
+  };
+
   return (
     <div>
-      <label>
+      <label className="inline-flex items-center">
         <input
           type="checkbox"
-          name={name}
           checked={checked}
-          onChange={(e) => onChange(e.target.checked)}
-          required={required}
+          onChange={handleChange}
+          onBlur={() => validate(checked)} 
+          className={`mr-2 ${error ? 'border-red-500' : ''}`}
         />
         {label}
       </label>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
 };

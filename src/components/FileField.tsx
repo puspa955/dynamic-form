@@ -3,26 +3,41 @@ import React, { useState } from 'react';
 type FileFieldProps = {
   name: string;
   label: string;
-  onChange: (file: File | null) => void;
   required?: boolean;
+  onValueChange: (name: string, value: File | null) => void; 
 };
 
 const FileField: React.FC<FileFieldProps> = ({
   name,
   label,
-  onChange,
   required,
+  onValueChange,
 }) => {
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState('');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newFile = e.target.files ? e.target.files[0] : null;
+    setFile(newFile);
+    onValueChange(name, newFile);
+    validate(newFile);
+  };
+
+  const validate = (newFile: File | null) => {
+    const errorMsg = required && !newFile ? `${label} is required.` : '';
+    setError(errorMsg);
+  };
+
   return (
     <div>
-      <label htmlFor={name}>{label}</label>
+      <label htmlFor={name} className="block mb-1">{label}</label>
       <input
         type="file"
-        name={name}
-        onChange={(e) => onChange(e.target.files?.[0] || null)}
-        required={required}
-        className="border p-2 rounded w-full"
+        onChange={handleChange}
+        onBlur={() => validate(file)} 
+        className={`border p-2 rounded w-full ${error ? 'border-red-500' : ''}`}
       />
+      {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
 };
