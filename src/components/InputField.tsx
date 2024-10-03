@@ -3,12 +3,15 @@ import React, { useState } from 'react';
 type InputFieldProps = {
   name: string;
   label: string;
-  type: string; 
+  type: string;
   placeholder?: string;
   required?: boolean;
   minLength?: number;
   maxLength?: number;
-  onValueChange: (name: string, value: string) => void; 
+  value: string;
+  error: string;
+  onChange: (value: string) => void;
+  onErrorChange: (error: string) => void;
 };
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -19,39 +22,34 @@ const InputField: React.FC<InputFieldProps> = ({
   required,
   minLength,
   maxLength,
-  onValueChange,
+  value,
+  error,
+  onChange,
+  onErrorChange,
 }) => {
-  const [value, setValue] = useState('');
-  const [error, setError] = useState('');
+  const [touched, setTouched] = useState(false);
+
+  const handleBlur = () => {
+    setTouched(true);
+    validate(value); // Validate on blur
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    setValue(newValue);
-    onValueChange(name, newValue);
-    validate(newValue);
+    onChange(newValue);
+    validate(newValue); // Validate on change
   };
 
-  const validate = (newValue: string) => {
+  const validate = (value: string) => {
     let errorMsg = '';
-    
-    // Check for required field
-    if (required && !newValue) {
+    if (required && !value) {
       errorMsg = `${label} is required.`;
-    } 
-    // Validate email format
-    else if (type === 'email' && newValue && !/\S+@\S+\.\S+/.test(newValue)) {
-      errorMsg = 'Please enter a valid email address.';
-    }
-    // Check for minimum length
-    else if (minLength && newValue.length < minLength) {
+    } else if (minLength && value.length < minLength) {
       errorMsg = `${label} must be at least ${minLength} characters long.`;
-    } 
-    // Check for maximum length
-    else if (maxLength && newValue.length > maxLength) {
+    } else if (maxLength && value.length > maxLength) {
       errorMsg = `${label} must be at most ${maxLength} characters long.`;
     }
-
-    setError(errorMsg);
+    onErrorChange(errorMsg); // Pass the error to the parent
   };
 
   return (
@@ -63,10 +61,10 @@ const InputField: React.FC<InputFieldProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={handleChange}
-        onBlur={() => validate(value)} 
-        className={`border p-2 rounded w-full ${error ? 'border-red-500' : ''}`}
+        onBlur={handleBlur}  
+        className={`border p-2 rounded w-full ${error && touched ? 'border-red-500' : ''}`}
       />
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && touched && <span className="text-red-500 text-sm">{error}</span>}
     </div>
   );
 };

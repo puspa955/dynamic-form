@@ -4,43 +4,56 @@ type CheckboxFieldProps = {
   name: string;
   label: string;
   required?: boolean;
-  onValueChange: (name: string, value: boolean) => void; 
+  checked: boolean;
+  error: string;
+  onChange: (value: boolean) => void;
+  onErrorChange: (error: string) => void;
 };
 
 const CheckboxField: React.FC<CheckboxFieldProps> = ({
   name,
   label,
   required,
-  onValueChange,
+  checked,
+  error,
+  onChange,
+  onErrorChange,
 }) => {
-  const [checked, setChecked] = useState(false);
-  const [error, setError] = useState('');
+  const [touched, setTouched] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newChecked = e.target.checked;
-    setChecked(newChecked);
-    onValueChange(name, newChecked);
-    validate(newChecked);
+  const handleBlur = () => {
+    setTouched(true);
+    validate(checked); // Validate on blur
   };
 
-  const validate = (newChecked: boolean) => {
-    const errorMsg = required && !newChecked ? `${label} is required.` : '';
-    setError(errorMsg);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.checked;
+    onChange(newValue);
+    validate(newValue); // Validate on change
+  };
+
+  const validate = (value: boolean) => {
+    let errorMsg = '';
+    if (required && !value) {
+      errorMsg = `${label} is required.`;
+    }
+    onErrorChange(errorMsg); // Pass the error to the parent
   };
 
   return (
     <div>
-      <label className="inline-flex items-center">
+      <label className="flex items-center">
         <input
           type="checkbox"
+          name={name}
           checked={checked}
           onChange={handleChange}
-          onBlur={() => validate(checked)} 
-          className={`mr-2 ${error ? 'border-red-500' : ''}`}
+          onBlur={handleBlur}
+          className={`mr-2 ${error && touched ? 'border-red-500' : ''}`}
         />
         {label}
       </label>
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && touched && <span className="text-red-500 text-sm">{error}</span>}
     </div>
   );
 };

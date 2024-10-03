@@ -26,64 +26,28 @@ type FormProps = {
 const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
-  const [isValid, setIsValid] = useState(true);
 
-  const handleFieldChange = (name: string, value: any) => {
+  const handleFieldChange = (name: string, value: any, error: string) => {
+    // Update form data and errors for the specific field
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
 
-    validateField(name, value);
-  };
-
-  const validateField = (name: string, value: any) => {
-    const field = schema.find((f) => f.name === name);
-    if (!field) return;
-
-    let errorMsg = '';
-    if (field.required && (value === undefined || value === null || value === '')) {
-      errorMsg = `${field.label} is required.`;
-    } 
-    else if (field.type === 'email' && value) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(value)) {
-        errorMsg = 'Please enter a valid email address.';
-      }
-    }
-
-    if (typeof value === 'string') { 
-      if (field.minLength && value.length < field.minLength) {
-        errorMsg = `${field.label} must be at least ${field.minLength} characters long.`;
-      }
-      if (field.maxLength && value.length > field.maxLength) {
-        errorMsg = `${field.label} must be at most ${field.maxLength} characters long.`;
-      }
-    }
-    
-    if (field.min !== undefined && value < field.min) {
-      errorMsg = `${field.label} must be at least ${field.min}.`;
-    }
-    
-    if (field.max !== undefined && value > field.max) {
-      errorMsg = `${field.label} must be at most ${field.max}.`;
-    }
-
     setFormErrors((prev) => ({
       ...prev,
-      [name]: errorMsg,
+      [name]: error,
     }));
-
-    setIsValid(Object.values({ ...formErrors, [name]: errorMsg }).every((err) => !err));
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    schema.forEach((field) => validateField(field.name, formData[field.name]));
+    // Check if any field has an error before submission
+    const hasErrors = Object.values(formErrors).some(error => error !== '');
 
-    if (isValid) {
-      onSubmit(formData);
+    if (!hasErrors) {
+      onSubmit(formData); // Call the onSubmit function passed from the parent
     }
   };
 
@@ -104,7 +68,10 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
                 required={field.required}
                 minLength={field.minLength}
                 maxLength={field.maxLength}
-                onValueChange={handleFieldChange}
+                value={formData[field.name] || ''}
+                error={formErrors[field.name] || ''}
+                onChange={(value) => handleFieldChange(field.name, value, '')} // Clear error on change
+                onErrorChange={(error) => handleFieldChange(field.name, formData[field.name], error)} // Pass error back
               />
             );
           case 'textarea':
@@ -116,7 +83,10 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
                 placeholder={field.placeholder}
                 required={field.required}
                 maxLength={field.maxLength}
-                onValueChange={handleFieldChange}
+                value={formData[field.name] || ''}
+                error={formErrors[field.name] || ''}
+                onChange={(value) => handleFieldChange(field.name, value, '')} // Clear error on change
+                onErrorChange={(error) => handleFieldChange(field.name, formData[field.name], error)} // Pass error back
               />
             );
           case 'select':
@@ -127,7 +97,10 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
                 label={field.label}
                 options={field.options || []}
                 required={field.required}
-                onValueChange={handleFieldChange}
+                value={formData[field.name] || ''}
+                error={formErrors[field.name] || ''}
+                onChange={(value) => handleFieldChange(field.name, value, '')} // Clear error on change
+                onErrorChange={(error) => handleFieldChange(field.name, formData[field.name], error)} // Pass error back
               />
             );
           case 'checkbox':
@@ -137,7 +110,10 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
                 name={field.name}
                 label={field.label}
                 required={field.required}
-                onValueChange={handleFieldChange}
+                checked={formData[field.name] || false}
+                error={formErrors[field.name] || ''}
+                onChange={(value) => handleFieldChange(field.name, value, '')} // Clear error on change
+                onErrorChange={(error) => handleFieldChange(field.name, formData[field.name], error)} // Pass error back
               />
             );
           case 'file':
@@ -147,7 +123,10 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
                 name={field.name}
                 label={field.label}
                 required={field.required}
-                onValueChange={handleFieldChange}
+                value={formData[field.name] || null}
+                error={formErrors[field.name] || ''}
+                onChange={(value) => handleFieldChange(field.name, value, '')} // Clear error on change
+                onErrorChange={(error) => handleFieldChange(field.name, formData[field.name], error)} // Pass error back
               />
             );
           default:
@@ -156,8 +135,8 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
       })}
       <button
         type="submit"
-        disabled={!isValid}
-        className={`bg-blue-500 text-white py-2 px-4 rounded ${!isValid ? 'opacity-50 cursor-not-allowed' : ''}`}
+        disabled={Object.values(formErrors).some(error => error !== '')}
+        className={`bg-blue-500 text-white py-2 px-4 rounded ${Object.values(formErrors).some(error => error !== '') ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         Submit
       </button>
