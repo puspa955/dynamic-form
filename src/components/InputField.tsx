@@ -37,7 +37,7 @@ const InputField: React.FC<InputFieldProps> = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     onChange(newValue);
-    validate(newValue); // Validate on change
+    // validate(newValue); // Validate on change
   };
 
   const validate = (value: string) => {
