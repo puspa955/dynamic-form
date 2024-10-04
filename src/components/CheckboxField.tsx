@@ -6,7 +6,7 @@ type CheckboxFieldProps = {
   required?: boolean;
   checked: boolean;
   error: string;
-  onChange: (value: boolean) => void;
+  onChange: (name: string, value: boolean) => void;
   onErrorChange: (error: string) => void;
 };
 
@@ -28,7 +28,7 @@ const CheckboxField: React.FC<CheckboxFieldProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.checked;
-    onChange(newValue);
+    onChange(name,newValue);
     // validate(newValue); // Validate on change
   };
 

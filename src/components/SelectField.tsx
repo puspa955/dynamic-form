@@ -6,7 +6,7 @@ type SelectFieldProps = {
   options: string[];
   value: string;
   error: string;
-  onChange: (value: string) => void;
+  onChange: (name:string ,value: string) => void;
   onErrorChange: (error: string) => void;
   required?: boolean;
 };
@@ -29,7 +29,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value;
-    onChange(newValue); // Sends the value to the form
+    onChange(name, newValue); // Sends the value to the form
     // validate(newValue); // Validates the value inside the field
   };
 

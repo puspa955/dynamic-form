@@ -10,7 +10,7 @@ type InputFieldProps = {
   maxLength?: number;
   value: string;
   error: string;
-  onChange: (value: string) => void;
+  onChange: ( name: string, value: string) => void;
   onErrorChange: (error: string) => void;
 };
 
@@ -36,7 +36,7 @@ const InputField: React.FC<InputFieldProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    onChange(newValue);
+    onChange(name, newValue);
     // validate(newValue); // Validate on change
   };
 

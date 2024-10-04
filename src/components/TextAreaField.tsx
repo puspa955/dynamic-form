@@ -6,7 +6,7 @@ type TextAreaFieldProps = {
   placeholder?: string;
   value: string;
   error: string;
-  onChange: (value: string) => void;
+  onChange: (name:string,value: string) => void;
   onErrorChange: (error: string) => void;
   required?: boolean;
   maxLength?: number;
@@ -31,7 +31,7 @@ const TextAreaField: React.FC<TextAreaFieldProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
-    onChange(newValue); // Sends the value to the form
+    onChange(name, newValue); // Sends the value to the form
     validate(newValue); // Validates the value inside the field
   };
 

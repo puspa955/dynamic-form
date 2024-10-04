@@ -28,6 +28,8 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
 
   const handleFieldChange = (name: string, value: any) => {
+    console.log(`Field changed: ${name}, New value: `, value);
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -52,6 +54,7 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {schema.map((field, index) => {
+        
         switch (field.type) {
           case 'text':
           case 'email':
@@ -59,16 +62,10 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
             return (
               <InputField
                 key={index}
-                name={field.name}
-                label={field.label}
-                type={field.type}
-                placeholder={field.placeholder}
-                required={field.required}
-                minLength={field.minLength}
-                maxLength={field.maxLength}
+                {...field}
                 value={formData[field.name] || ''}
                 error={formErrors[field.name] || ''}
-                onChange={(value) => handleFieldChange(field.name, value)}
+                onChange={handleFieldChange}
                 onErrorChange={(error) => setFormErrors((prev) => ({ ...prev, [field.name]: error }))} 
               />
             );
@@ -76,14 +73,10 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
             return (
               <TextAreaField
                 key={index}
-                name={field.name}
-                label={field.label}
-                placeholder={field.placeholder}
-                required={field.required}
-                maxLength={field.maxLength}
+                {...field}
                 value={formData[field.name] || ''}
                 error={formErrors[field.name] || ''}
-                onChange={(value) => handleFieldChange(field.name, value)} 
+                onChange={handleFieldChange} 
                 onErrorChange={(error) => setFormErrors((prev) => ({ ...prev, [field.name]: error }))} 
               />
             );
@@ -91,13 +84,11 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
             return (
               <SelectField
                 key={index}
-                name={field.name}
-                label={field.label}
+               {...field}
                 options={field.options || []}
-                required={field.required}
                 value={formData[field.name] || ''}
                 error={formErrors[field.name] || ''}
-                onChange={(value) => handleFieldChange(field.name, value)} 
+                onChange={handleFieldChange} 
                 onErrorChange={(error) => setFormErrors((prev) => ({ ...prev, [field.name]: error }))} 
               />
             );
@@ -105,12 +96,10 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
             return (
               <CheckboxField
                 key={index}
-                name={field.name}
-                label={field.label}
-                required={field.required}
+                {...field}
                 checked={formData[field.name] || false}
                 error={formErrors[field.name] || ''}
-                onChange={(value) => handleFieldChange(field.name, value)} 
+                onChange={handleFieldChange} 
                 onErrorChange={(error) => setFormErrors((prev) => ({ ...prev, [field.name]: error }))} 
               />
             );
@@ -118,12 +107,10 @@ const Form: React.FC<FormProps> = ({ schema, onSubmit }) => {
             return (
               <FileField
                 key={index}
-                name={field.name}
-                label={field.label}
-                required={field.required}
+                {...field}
                 value={formData[field.name] || null}
                 error={formErrors[field.name] || ''}
-                onChange={(value) => handleFieldChange(field.name, value)} 
+                onChange={handleFieldChange} 
                 onErrorChange={(error) => setFormErrors((prev) => ({ ...prev, [field.name]: error }))} 
               />
             );

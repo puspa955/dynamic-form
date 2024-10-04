@@ -5,7 +5,7 @@ type FileFieldProps = {
   label: string;
   value: File | null;
   error: string;
-  onChange: (file: File | null) => void;
+  onChange: (name:string, file: File | null) => void;
   onErrorChange: (error: string) => void;
   required?: boolean;
 };
@@ -27,7 +27,7 @@ const FileField: React.FC<FileFieldProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
-    onChange(file); // Sends the file to the form
+    onChange(name, file); // Sends the file to the form
     validate(file); // Validates the file inside the field
   };
 
